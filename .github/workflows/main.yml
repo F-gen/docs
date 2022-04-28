@@ -79,12 +79,12 @@ jobs:
     - name: use Node.js 10.x
       uses: actions/setup-node@v1
       with:
-        node-version: 10.x
+        node-version: 12.x
     # npm install
     - name: npm install and build
       run: |
-         yarn install
-         yarn docs:build
+         npm install
+         npm run docs:build
       env:
         CI: true
     # 设置阿里云OSS的 id/secret，存储到 github 的 secrets 中
