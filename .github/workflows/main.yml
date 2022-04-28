@@ -24,7 +24,7 @@ jobs:
     # npm install
     - name: npm install and build
       run: |
-        npm install -g npm
+        npm install npm@10.24.1 -g 
         npm run build
       env:
         CI: true
