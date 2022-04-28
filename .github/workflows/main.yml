@@ -24,7 +24,7 @@ jobs:
     # npm install
     - name: npm install and build
       run: |
-       npm install npm@8.5.3 -g
+       npm install npm@12.13.0 -g
         npm run docs:build
       env:
         CI: true
