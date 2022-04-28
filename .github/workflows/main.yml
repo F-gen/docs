@@ -1,102 +1,103 @@
-name: CI
+# name: CI
 
-on:
-  push:
-    branches: [ master ]
+# on:
+#   push:
+#     branches: [ main]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      # 在当前环境中拉取你仓库然后进入到目录，下面的步骤在仓库的根目录中进行
-      - name: Checkout
-        uses: actions/checkout@master
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       # 在当前环境中拉取你仓库然后进入到目录，下面的步骤在仓库的根目录中进行
+#       - name: Checkout
+#         uses: actions/checkout@master
 
-      - name: vuepress-deploy
-        uses: jenkey2011/vuepress-deploy@master
-        env:
-          ACCESS_TOKEN: ${{ secrets.TOKEN }}
-          TARGET_REPO: F-gen/blog
-          TARGET_BRANCH: gh-pages
-          BUILD_SCRIPT: yarn && yarn build
-          BUILD_DIR: docs/.vuepress/dist/
-          CNAME: ${{ secrets.CNAME }}
+#       - name: vuepress-deploy
+#         uses: jenkey2011/vuepress-deploy@master
+#         env:
+#           ACCESS_TOKEN: ${{ secrets.TOKEN }}
+#           TARGET_REPO: F-gen/blog
+#           TARGET_BRANCH: gh-pages
+#           BUILD_SCRIPT: yarn && yarn build
+#           BUILD_DIR: docs/.vuepress/dist/
+#           CNAME: ${{ secrets.CNAME }}
           
-  build-to-OSS:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@master
+#   build-to-OSS:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@master
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '14.x'
+#     - name: Setup Node.js
+#       uses: actions/setup-node@v1
+#       with:
+#         node-version: '14.x'
     
-    - name: Build Web
-      run: |
-        node changeOssPath.js
-        yarn add -D vuepress
-        yarn install
-        yarn build
-        echo '${{ secrets.OSS_URL }}' > docs/.vuepress/dist/CNAME
-        mv docs/.vuepress/dist ./
+#     - name: Build Web
+#       run: |
+#         node changeOssPath.js
+#         yarn add -D vuepress
+#         yarn install
+#         yarn build
+#         echo '${{ secrets.OSS_URL }}' > docs/.vuepress/dist/CNAME
+#         mv docs/.vuepress/dist ./
         
-    - name: Upload to OSS
-      env:
-        OSS_REGION: ${{ secrets.OSS_REGION }}
-        OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
-        OSS_KEY: ${{ secrets.OSS_KEY_ID }}
-        OSS_SECRET: ${{ secrets.OSS_KEY_SECRET }}
-        OSS_URL: ${{ secrets.OSS_URL }}
-      run: |
-        ls
-        pwd
-        node ossSync.js
+#     - name: Upload to OSS
+#       env:
+#         OSS_REGION: ${{ secrets.OSS_REGION }}
+#         OSS_BUCKET: ${{ secrets.OSS_BUCKET }}
+#         OSS_KEY: ${{ secrets.OSS_KEY_ID }}
+#         OSS_SECRET: ${{ secrets.OSS_KEY_SECRET }}
+#         OSS_URL: ${{ secrets.OSS_URL }}
+#       run: |
+#         ls
+#         pwd
+#         node ossSync.js
 
    
 
 
-# name: deploy to aliyun oss
+name: deploy to aliyun oss
 
-# on: [push]
+on: [push]
 
-# jobs:
-#   build:
+jobs:
+  build:
 
-#     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-#     steps:
-#     # 切代码到 runner
-#     - uses: actions/checkout@v1
-#       with:
-#         submodules: true
-#     # 下载 git submodule
-#     # - uses: srt32/git-actions@v0.0.3
-#     #   with:
-#     #     args: git submodule update --init --recursive
-#     # 使用 node:10
-#     - name: use Node.js 10.x
-#       uses: actions/setup-node@v1
-#       with:
-#         node-version: 10.x
-#     # npm install
-#     - name: npm install and build
-#       run: |
-#         npm install
-#         npm run build
-#       env:
-#         CI: true
-#     # 设置阿里云OSS的 id/secret，存储到 github 的 secrets 中
-#     - name: setup aliyun oss
-#       uses: manyuanrong/setup-ossutil@master
-#       with:
-#         endpoint: oss-cn-shanghai.aliyuncs.com
-#         access-key-id: ${{ secrets.OSS_KEY_ID }}
-#         access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
-#     - name: cp files to aliyun
-#       run: ossutil cp -rf .vuepress/dist oss://eureka-blog/
-# # workflow name
+    steps:
+    # 切代码到 runner
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    # 下载 git submodule
+    # - uses: srt32/git-actions@v0.0.3
+    #   with:
+    #     args: git submodule update --init --recursive
+    # 使用 node:10
+    - name: use Node.js 10.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    # npm install
+    - name: npm install and build
+      run: |
+        npm install
+        npm ci
+        npm run docs:build
+      env:
+        CI: true
+    # 设置阿里云OSS的 id/secret，存储到 github 的 secrets 中
+    - name: setup aliyun oss
+      uses: manyuanrong/setup-ossutil@master
+      with:
+        endpoint: oss-cn-shanghai.aliyuncs.com
+        access-key-id: ${{ secrets.OSS_KEY_ID }}
+        access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
+    - name: cp files to aliyun
+      run: ossutil cp -rf .vuepress/dist oss://eureka-blog/
+# workflow name
 # name: Hexo Blog CI
 
 # # 在main分支上有push命令时触发该流程
