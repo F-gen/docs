@@ -34,7 +34,7 @@ module.exports = {
         },
         {
           title: "书籍",
-          path: '.handok/Book',
+          path: './handok/Book',
           collapsable: false, // 不折叠
           children: [
             { title: "书籍Mark", path: "./handok/Book" },
