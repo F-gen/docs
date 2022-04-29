@@ -54,7 +54,7 @@ jobs:
         uses: jenkey2011/vuepress-deploy@master
         env:
           ACCESS_TOKEN: ${{ secrets.TOKEN }}
-          TARGET_REPO: F-gen/blog
+          TARGET_REPO: F-gen/docs
           TARGET_BRANCH: gh-pages
           BUILD_SCRIPT: npm install && npm docs:build
           BUILD_DIR: docs/.vuepress/dist/
