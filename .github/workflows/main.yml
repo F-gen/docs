@@ -24,7 +24,7 @@ jobs:
     # npm install
     - name: npm install and build
       run: |
-         sudo rm -rf node_modules package-lock.json && npm install
+          npm install
          npm run docs:build
       env:
         CI: true
