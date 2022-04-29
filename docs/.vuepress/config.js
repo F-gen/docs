@@ -2,6 +2,7 @@ module.exports = {
   title: 'STAR',
   description: 'Slow growth and rapid decline',
   theme: 'reco',
+  base:'./',
   themeConfig: {
     subSidebar: 'auto'
   },
