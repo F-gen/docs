@@ -37,25 +37,56 @@
 #         access-key-secret: ${{ secrets.OSS_KEY_SECRET }}
 #     - name: cp files to aliyun
 #       run: ossutil cp -rf docs/.vuepress/dist oss://eureka-blog/
-name: CI
+# name: CI
+
+# on:
+#   push:
+#     branches: [ main ]
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       # 在当前环境中拉取你仓库然后进入到目录，下面的步骤在仓库的根目录中进行
+#       - name: Checkout
+#         uses: actions/checkout@master
+#     # 使用 node:10
+#     - name: use Node.js 10.x
+#       uses: actions/setup-node@v1
+#       with:
+#         node-version: 12.x
+#       - name: vuepress-deploy
+#         uses: jenkey2011/vuepress-deploy@master
+#         env:
+#           ACCESS_TOKEN: ${{ secrets.TOKEN }}
+#           TARGET_REPO: F-gen/docs
+#           TARGET_BRANCH: gh-pages
+#           BUILD_SCRIPT: npm install && npm docs:build
+#           BUILD_DIR: docs/.vuepress/dist/
+#           CNAME: ${{ secrets.CNAME }}
+name: Publish to Github Pages
 
 on:
   push:
-    branches: [ main ]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      # 在当前环境中拉取你仓库然后进入到目录，下面的步骤在仓库的根目录中进行
-      - name: Checkout
-        uses: actions/checkout@master
+    branches:
+      - main
 
-      - name: vuepress-deploy
-        uses: jenkey2011/vuepress-deploy@master
+jobs:
+  build-deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@master
+
+      # 安装依赖
+      - run: npm ci
+
+      # 打包
+      - run: npm run docs:build
+
+      # 部署
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v2.5.0
         env:
-          ACCESS_TOKEN: ${{ secrets.TOKEN }}
-          TARGET_REPO: F-gen/docs
-          TARGET_BRANCH: gh-pages
-          BUILD_SCRIPT: npm install && npm docs:build
-          BUILD_DIR: docs/.vuepress/dist/
-          CNAME: ${{ secrets.CNAME }}
+          PERSONAL_TOKEN: ${{ secrets.TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          # 生成文件的目录
+          PUBLISH_DIR: docs/.vuepress/dist/
