@@ -8,4 +8,4 @@ npm run docs:build
 
 页面404，删除 @vuepress/core/client/app.js中的  mode：history，需要为hash
 
-
+404 问题没解决....
